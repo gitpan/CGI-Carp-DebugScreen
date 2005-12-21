@@ -2,8 +2,9 @@ Changes
 Makefile.PL
 MANIFEST
 README
-t/CGI-Carp-DebugScreen.t
+t/00_use.t
 lib/CGI/Carp/DebugScreen.pm
 lib/CGI/Carp/DebugScreen/DefaultView.pm
 lib/CGI/Carp/DebugScreen/TT.pm
 lib/CGI/Carp/DebugScreen/HTML/Template.pm
+META.yml                                 Module meta-data (added by MakeMaker)

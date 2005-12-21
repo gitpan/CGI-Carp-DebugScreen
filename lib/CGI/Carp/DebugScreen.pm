@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
 
   BEGIN {
     my $MyDebug = 0;

@@ -19,9 +19,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  - strict
-  - warnings
-  - CGI::Carp
+  CGI::Carp
 
 COPYRIGHT AND LICENCE
 

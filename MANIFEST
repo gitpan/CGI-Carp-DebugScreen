@@ -1,0 +1,9 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/CGI-Carp-DebugScreen.t
+lib/CGI/Carp/DebugScreen.pm
+lib/CGI/Carp/DebugScreen/DefaultView.pm
+lib/CGI/Carp/DebugScreen/TT.pm
+lib/CGI/Carp/DebugScreen/HTML/Template.pm

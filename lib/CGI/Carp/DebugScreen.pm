@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.03';
 
   BEGIN {
     my $MyDebug = 0;
@@ -235,6 +235,8 @@ EOS
     \@contents;
   }
 }
+
+1;
 __END__
 
 =head1 NAME

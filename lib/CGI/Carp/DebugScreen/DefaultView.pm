@@ -3,7 +3,7 @@ package CGI::Carp::DebugScreen::DefaultView;
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
 
   sub show {
     my ($pkg, %options) = @_;
@@ -19,7 +19,7 @@ package CGI::Carp::DebugScreen::DefaultView;
 
     $str =~ s/&/&amp;/g;
     $str =~ s/>/&gt;/g;
-    $str =~ s/</&gt;/g;
+    $str =~ s/</&lt;/g;
     $str =~ s/"/&quot;/g;
 
     $str;

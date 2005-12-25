@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.03';
+  our $VERSION = '0.04';
 
   BEGIN {
     my $MyDebug = 0;
@@ -246,8 +246,8 @@ applications
 
 =head1 SYNOPSIS
 
-  use CGI::Carp::DebugScreen(
-    debug       => 1,
+  use CGI::Carp::DebugScreen (
+    debug       => $ENV{Debug},
     engine      => 'HTML::Template',
     lines       => 5,
     modules     => 1,
@@ -273,12 +273,13 @@ function internally. If something dies or croaks, this confesses
 stack traces, included modules (optional), environmental variables
 (optional, too) in a more decent way.
 
-When you finish debugging, set debug option to false. Then, more 
-limited, less informative error screen appears when dies or croaks.
-If something goes wrong and your users might see the screen, they 
-only know something has happened. They'll never know where your 
-modules are and they'll never see the awkward 500 Internal Server 
-Error -- hopefully.
+When you finish debugging, set debug option to false (via some 
+environmental variable, for example). Then, more limited, less 
+informative error screen appears when dies or croaks. If something 
+goes wrong and your users might see the screen, they only know 
+something has happened. They'll never know where your modules are 
+and they'll never see the awkward 500 Internal Server Error -- 
+hopefully.
 
 You can, and are suggested to, customize both debug and error 
 screens, and some style settings, in harmony with your application.
@@ -304,7 +305,8 @@ Enjoy.
 =item debug (or d)
 
 If set true, debug screen appears; if false, error screen does.
-Default value is 1.
+Default value is 1. Setting some environmental variable here is
+a good idea.
 
 =item engine (or e)
 

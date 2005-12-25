@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::TT;
   use warnings;
   use Template;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -119,7 +119,7 @@ EOT
 
     $str =~ s/&/&amp;/g;
     $str =~ s/>/&gt;/g;
-    $str =~ s/</&gt;/g;
+    $str =~ s/</&lt;/g;
     $str =~ s/"/&quot;/g;
 
     $str;

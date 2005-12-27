@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.04';
+  our $VERSION = '0.05';
 
   BEGIN {
     my $MyDebug = 0;
@@ -153,8 +153,9 @@ EOS
 
     my $first_message = '';
     my @traces = grep {
-        my $caller = $_->{caller};
+        my $caller = $_->{caller} || '';
         (
+          $caller eq '' or                  # ignore undefined caller;
           $caller eq $INC{'Carp.pm'} or     # ignore Carp;
           $caller eq $INC{'CGI/Carp.pm'}    # ignore CGI::Carp;
         ) ? 0 : 1;
@@ -163,6 +164,8 @@ EOS
       my $line = $_;
       my ($message, $caller, $line_no) = $line =~ /^(?:\s*)(.*?)(?: called)? at (\S+) line (\d+)\.?$/;
       $first_message = $message unless $first_message && defined $message;
+      $caller  ||= '';
+      $line_no ||= 0;
       my $contents = _get_contents($caller,$line_no);
       +{
          message  => $message,
@@ -200,13 +203,15 @@ EOS
       $viewer = 'CGI::Carp::DebugScreen::DefaultView';
     }
 
+    my $error_message = $first_message.' at '.$traces[0]->{caller}.' line '.$traces[0]->{line};
+
     $viewer->show(
       debug          => $Debug,
       debug_tmpl     => $DebugTemplate,
       error_tmpl     => $ErrorTemplate,
       style          => $Style,
       error_at       => $error_at,
-      error_message  => $first_message.' at '.$traces[0]->{caller}.' line '.$traces[0]->{line},
+      error_message  => $error_message,
       raw_error      => $errstr,
       show_raw_error => $ShowRawError,
       traces         => \@traces,
@@ -217,6 +222,9 @@ EOS
 
   sub _get_contents {
     my ($file, $line_no) = @_;
+
+    return unless $file;
+    return unless -f $file;
 
     my @contents;
     if (open my $fh, '<'.$file) {

@@ -1,13 +1,16 @@
 Revision history for Perl extension CGI::Carp::DebugScreen.
 
+0.05  Thu Dec 27 16:12 2005
+        - fixed some 'uninitialized' errors
+
 0.04  Thu Dec 25 17:46 2005
         - fixed lt escape for DefaultView and TT
 
 0.03  Thu Dec 22 13:15 2005
-        - fixed distribution error; sorry again
+        - fixed packaging error; sorry again
 
 0.02  Wed Dec 21 23:58 2005
-        - fixed distribution error
+        - fixed packaging error
 
 0.01  Wed Dec 21 21:00 2005
         - Initial release

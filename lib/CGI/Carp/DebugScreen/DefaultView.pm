@@ -3,7 +3,7 @@ package CGI::Carp::DebugScreen::DefaultView;
   use strict;
   use warnings;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.03';
 
   sub show {
     my ($pkg, %options) = @_;
@@ -88,7 +88,7 @@ EOT
 
     foreach my $trace (@{ $options{traces} }) {
       my $caller = _escape($trace->{caller});
-      my $line   = _escape($trace->{line});
+      my $line   = $trace->{line};
       print <<"EOT";
 <li>$caller LINE : $line</li>
 <table class="code">

@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::TT;
   use warnings;
   use Template;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.03';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -39,7 +39,7 @@ package CGI::Carp::DebugScreen::TT;
 <h2><a name="traces">Stack Traces</a></h2>
 <ul id="traces">
 [% FOREACH trace = traces %]
-<li>[% trace.caller | html %] LINE : [% trace.line | html %]</li>
+<li>[% trace.caller | html %] LINE : [% trace.line %]</li>
 <table class="code">
 [% FOREACH content = trace.contents %]
 [% IF content.hit %]<tr class="hit">[% ELSE %]<tr>[% END %]

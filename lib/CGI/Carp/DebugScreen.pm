@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.05';
+  our $VERSION = '0.06';
 
   BEGIN {
     my $MyDebug = 0;
@@ -162,7 +162,7 @@ EOS
       }
       map {
       my $line = $_;
-      my ($message, $caller, $line_no) = $line =~ /^(?:\s*)(.*?)(?: called)? at (\S+) line (\d+)\.?$/;
+      my ($message, $caller, $line_no) = $line =~ /^(?:\s*)(.*?)(?: called)? at (\S+) line (.+)$/;
       $first_message = $message unless $first_message && defined $message;
       $caller  ||= '';
       $line_no ||= 0;

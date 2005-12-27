@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
   use warnings;
   use HTML::Template;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -30,7 +30,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 <h2><a name="traces">Stack Traces</a></h2>
 <ul id="traces">
 <TMPL_LOOP NAME="traces">
-<li><TMPL_VAR NAME="caller" ESCAPE=HTML> LINE : <TMPL_VAR NAME="line" ESCAPE=HTML></li>
+<li><TMPL_VAR NAME="caller" ESCAPE=HTML> LINE : <TMPL_VAR NAME="line"></li>
 <table class="code">
 <TMPL_LOOP NAME="contents">
 <TMPL_IF NAME="hit"><tr class="hit"><TMPL_ELSE><tr></TMPL_IF>

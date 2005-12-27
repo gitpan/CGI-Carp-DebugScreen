@@ -1,4 +1,4 @@
-CGI-Carp-DebugScreen version 0.05
+CGI-Carp-DebugScreen version 0.06
 =================================
 
 CGI::Carp::DebugScreen provides decent debug/error screens for Web

@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
   use warnings;
   use HTML::Template;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.03';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -25,7 +25,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 <TMPL_VAR NAME="error_message">
 </div>
 </TMPL_IF>
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
 <h2><a name="traces">Stack Traces</a></h2>
 <ul id="traces">
@@ -41,8 +41,24 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </TMPL_LOOP>
 </ul>
 </div>
+<TMPL_IF NAME="watchlist">
+<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="box">
+<h2><a name="watch">Watch List</a></h2>
+<ul id="watch">
+<TMPL_LOOP NAME="watchlist">
+<li>
+<b><TMPL_VAR NAME="key" ESCAPE=HTML></b>
+<div class="scrollable">
+<TMPL_VAR NAME="table">
+</div>
+</li>
+</TMPL_LOOP>
+</ul>
+</div>
+</TMPL_IF>
 <TMPL_IF NAME="modules">
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
 <h2><a name="modules">Included Modules</a></h2>
 <ul id="modules">
@@ -53,7 +69,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </div>
 </TMPL_IF>
 <TMPL_IF NAME="environment">
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
 <h2><a name="environment">Environmental Variables</a></h2>
 <table id="environment">
@@ -65,6 +81,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </table>
 </div>
 </TMPL_IF>
+<p class="footer">CGI::Carp::DebugScreen <TMPL_VAR NAME="version" ESCAPE=HTML>. Output via <TMPL_VAR NAME="viewer" ESCAPE=HTML></p>
 </div>
 </body>
 </html>
@@ -126,7 +143,7 @@ One of the ready-made view classes for CGI::Carp::DebugScreen.
 
 =head1 SEE ALSO
 
-CGI::Carp::DebugScreen, HTML::Template
+L<CGI::Carp::DebugScreen>, L<HTML::Template>
 
 =head1 AUTHOR
 
@@ -134,7 +151,7 @@ Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 by Kenichi Ishigaki
+Copyright (C) 2005-2006 by Kenichi Ishigaki
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

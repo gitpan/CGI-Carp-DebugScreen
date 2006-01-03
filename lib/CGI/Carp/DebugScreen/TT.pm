@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::TT;
   use warnings;
   use Template;
 
-  our $VERSION = '0.03';
+  our $VERSION = '0.04';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -28,6 +28,9 @@ package CGI::Carp::DebugScreen::TT;
 <div class="navi">
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
+[% IF watchlist %]
+[<a href="#watch">watchlist</a>]
+[% END %]
 [% IF modules %]
 [<a href="#modules">modules</a>]
 [% END %]
@@ -50,10 +53,41 @@ package CGI::Carp::DebugScreen::TT;
 [% END %]
 </ul>
 </div>
+[% IF watchlist %]
+<div class="navi">
+[<a href="#top">top</a>]
+[<a href="#traces">traces</a>]
+[% IF watchlist %]
+[<a href="#watch">watchlist</a>]
+[% END %]
+[% IF modules %]
+[<a href="#modules">modules</a>]
+[% END %]
+[% IF environment %]
+[<a href="#environment">environment</a>]
+[% END %]
+</div>
+<div class="box">
+<h2><a name="watch">Watch List</a></h2>
+<ul id="watch">
+[% FOREACH watch = watchlist %]
+<li>
+<b>[% watch.key | html %]</b>
+<div class="scrollable">
+[% watch.table %]
+</div>
+</li>
+[% END %]
+</ul>
+</div>
+[% END %]
 [% IF modules %]
 <div class="navi">
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
+[% IF watchlist %]
+[<a href="#watch">watchlist</a>]
+[% END %]
 [% IF modules %]
 [<a href="#modules">modules</a>]
 [% END %]
@@ -74,6 +108,9 @@ package CGI::Carp::DebugScreen::TT;
 <div class="navi">
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
+[% IF watchlist %]
+[<a href="#watch">watchlist</a>]
+[% END %]
 [% IF modules %]
 [<a href="#modules">modules</a>]
 [% END %]
@@ -92,6 +129,7 @@ package CGI::Carp::DebugScreen::TT;
 </table>
 </div>
 [% END %]
+<p class="footer">CGI::Carp::DebugScreen [% version %]. Output via [% viewer %]</p>
 </div>
 </body>
 </html>
@@ -162,7 +200,7 @@ One of the ready-made view classes for CGI::Carp::DebugScreen.
 
 =head1 SEE ALSO
 
-CGI::Carp::DebugScreen, Template
+L<CGI::Carp::DebugScreen>, L<Template>
 
 =head1 AUTHOR
 
@@ -170,7 +208,7 @@ Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 by Kenichi Ishigaki
+Copyright (C) 2005-2006 by Kenichi Ishigaki
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

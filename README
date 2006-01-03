@@ -1,4 +1,4 @@
-CGI-Carp-DebugScreen version 0.06
+CGI-Carp-DebugScreen version 0.07
 =================================
 
 CGI::Carp::DebugScreen provides decent debug/error screens for Web
@@ -23,7 +23,7 @@ This module requires these other modules and libraries:
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2005 by Kenichi Ishigaki
+Copyright (C) 2005-2006 by Kenichi Ishigaki
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

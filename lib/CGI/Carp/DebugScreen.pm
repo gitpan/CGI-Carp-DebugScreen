@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.06';
+  our $VERSION = '0.07';
 
   BEGIN {
     my $MyDebug = 0;
@@ -24,6 +24,7 @@ package CGI::Carp::DebugScreen;
   my $ShowRawError;
   my $DebugTemplate;
   my $ErrorTemplate;
+  my $WatchList = {};
 
   my $Style =<<'EOS';
 <style type="text/css">
@@ -94,6 +95,19 @@ package CGI::Carp::DebugScreen;
     width: 4em;
     text-align:right
   }
+  table.watch {
+    line-height: 120%;
+  }
+  table.watch th {
+    font-weight: normal;
+    color: #000;
+    background-color: #fc9;
+    padding: 0 1em;
+  }
+  table.watch td {
+    line-height: 130%;
+    padding: 2px;
+  }
   div.scrollable {
     font-size: .8em;
     overflow: auto;
@@ -111,13 +125,19 @@ package CGI::Carp::DebugScreen;
     font-family: 'Courier New', Courier, monospace;
     overflow: auto;
   }
-  ul#traces, ul#modules {
+  ul#traces, ul#modules ul#watch {
     margin: 1em 1em;
     padding: 0 1em;
   }
   table#environment {
     margin: 0 1em;
   }
+  p.footer {
+    margin: 0 1em;
+    font-size: .8em;
+    text-align:right;
+  }
+
 -->
 </style>
 EOS
@@ -125,6 +145,7 @@ EOS
   sub import {
     my $pkg = shift;
     my %options = @_;
+
     while(my ($key, $value) = each %options) {
       next unless defined $value;
       $key = lc $key;
@@ -147,6 +168,13 @@ EOS
   sub show_modules       { shift; $ShowMod = shift; }
   sub show_environment   { shift; $ShowEnv = shift; }
   sub show_raw_error     { shift; $ShowRawError = shift; }
+
+  sub add_watchlist      {
+    my ($pkg, %hash) = @_;
+    foreach my $key (keys %hash) {
+      $WatchList->{$key} = $hash{$key};
+    }
+  }
 
   sub show {
     my ($pkg, $errstr) = @_;
@@ -195,6 +223,21 @@ EOS
       }
     } sort {$a cmp $b} keys %ENV if $ShowEnv;
 
+    my @watchlist = ();
+    if (%{ $WatchList }) {
+      require CGI::Carp::DebugScreen::Dumper;
+      foreach my $key (sort {$a cmp $b} keys %{ $WatchList }) {
+        push @watchlist, {
+          key   => $key,
+          table => CGI::Carp::DebugScreen::Dumper->dump(
+                     $WatchList->{$key}
+                   ),
+        };
+      }
+    }
+
+    $Engine = 'TT' if lc $Engine eq 'template'; # engine alias
+
     my $viewer = __PACKAGE__.'::'.$Engine;
 
     eval "require $viewer";
@@ -206,9 +249,11 @@ EOS
     my $error_message = $first_message.' at '.$traces[0]->{caller}.' line '.$traces[0]->{line};
 
     $viewer->show(
+      version        => $VERSION,
       debug          => $Debug,
       debug_tmpl     => $DebugTemplate,
       error_tmpl     => $ErrorTemplate,
+      viewer         => $viewer,
       style          => $Style,
       error_at       => $error_at,
       error_message  => $error_message,
@@ -217,6 +262,7 @@ EOS
       traces         => \@traces,
       modules        => \@modules,
       environment    => \@environment,
+      watchlist      => \@watchlist,
     );
   }
 
@@ -254,6 +300,7 @@ applications
 
 =head1 SYNOPSIS
 
+  use Carp;
   use CGI::Carp::DebugScreen (
     debug       => $ENV{Debug},
     engine      => 'HTML::Template',
@@ -308,85 +355,82 @@ Enjoy.
     style       => $Style,
   );
 
-=over 4
-
-=item debug (or d)
+=head2 debug (or d)
 
 If set true, debug screen appears; if false, error screen does.
-Default value is 1. Setting some environmental variable here is
-a good idea.
+The default value is 1. Setting some environmental variable here
+is a good idea.
 
-=item engine (or e)
+=head2 engine (or e)
 
 Sets the name of a view subclass. Default value is 'DefaultView',
 which uses no template engines. 'HTML::Template' and 'TT' are also
 available.
 
-=item lines (or l)
+=head2 lines (or l)
 
 Sets the number of lines shown before and after the traced line.
-Default value is 3.
+The default value is 3.
 
-=item modules (or m / mod)
+=head2 modules (or m / mod)
 
 If set true, debug screen shows a list of included modules.
-Default value is undef.
+The default value is undef.
 
-=item environment (or env)
+=head2 environment (or env)
 
 If set true, debug screen shows a table of environmental variables.
-Default value is undef.
+The default value is undef.
 
-=item raw_error (or raw)
+=head2 raw_error (or raw)
 
 If set true, debug screen shows a raw error (CGI::Carp::confessed) 
-message.
-Default value is undef.
+message. The default value is undef.
 
-=item debug_template (or dt)
+=head2 debug_template (or dt)
 
-=item error_template (or et)
+=head2 error_template (or et)
 
-=item style (or s)
+=head2 style (or s)
 
-Overload default templates and style if defined. But you may want 
-to set these templates through correspondent methods.
-
-=back
+Overload the default templates and style if defined. But you may
+want to set these templates through correspondent methods.
 
 =head1 PACKAGE METHODS
 
-=over 4
+=head2 debug
 
-=item debug
+=head2 show_modules
 
-=item show_modules
+=head2 show_environment
 
-=item show_environment
+=head2 show_raw_error
 
-=item show_raw_error
+=head2 set_debug_template
 
-=item set_debug_template
+=head2 set_error_template
 
-=item set_error_template
-
-=item set_style
+=head2 set_style
 
 Do the same as the correspondent options. e.g.
 
   CGI::Carp::DebugScreen->debug(1); # debug screen appears
 
-=back
+=head2 add_watchlist
+
+  CGI::Carp::DebugScreen->add_watchlist( name => $ref );
+
+If set, the module dumps the contents of the references while outputting
+the debug screen.
 
 =head1 TODO
 
-I'm going to implement some watchdog functions, and support 
-encoding (though CGI::Carp qw/fatalsToBrowser/ sends no charset 
+Encoding support (though CGI::Carp qw/fatalsToBrowser/ sends no charset 
 header). And some more tests. Any ideas?
 
 =head1 SEE ALSO
 
-CGI::Carp, CGI::Application::Plugin::DebugScreen
+L<CGI::Carp>, L<CGI::Application::Plugin::DebugScreen>
 
 =head1 ACKNOWLEDGMENT
 
@@ -422,7 +466,7 @@ Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 by Kenichi Ishigaki
+Copyright (C) 2005-2006 by Kenichi Ishigaki
 
 This library is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.

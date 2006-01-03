@@ -3,7 +3,7 @@ package CGI::Carp::DebugScreen::DefaultView;
   use strict;
   use warnings;
 
-  our $VERSION = '0.03';
+  our $VERSION = '0.04';
 
   sub show {
     my ($pkg, %options) = @_;
@@ -33,6 +33,11 @@ package CGI::Carp::DebugScreen::DefaultView;
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
 EOT
+    if ($options{watchlist}) {
+      print <<"EOT";
+[<a href="#watch">watchlist</a>]
+EOT
+    }
     if ($options{modules}) {
       print <<"EOT";
 [<a href="#modules">modules</a>]
@@ -122,6 +127,33 @@ EOT
 </div>
 EOT
 
+    if ($options{watchlist}) {
+      _navi(%options);
+
+      print <<"EOT";
+<div class="box">
+<h2><a name="watch">Watch List</a></h2>
+<ul id="watch">
+EOT
+
+      foreach my $watch (@{ $options{watchlist} }) {
+        my $key   = _escape($watch->{key});
+        my $table = $watch->{table};
+        print <<"EOT";
+<li>
+<b>$key</b><br>
+<div class="scrollable">
+$table
+</div>
+</li>
+EOT
+      }
+      print <<"EOT";
+</ul>
+</div>
+EOT
+    }
+
     if ($options{modules}) {
       _navi(%options);
 
@@ -169,7 +201,11 @@ EOT
 EOT
     }
 
+    my $version = _escape($options{version});
+    my $viewer  = _escape($options{viewer});
+
     print <<"EOT";
+<p class="footer">CGI::Carp::DebugScreen $version. Output via $viewer</p>
 </div>
 </body>
 </html>
@@ -221,11 +257,11 @@ CGI::Carp::DebugScreen::DefaultView - CGI::Carp::DebugScreen View Class without 
 
 One of the ready-made view classes for CGI::Carp::DebugScreen.
 
-This is default.
+This is the default.
 
 =head1 SEE ALSO
 
-CGI::Carp::DebugScreen
+L<CGI::Carp::DebugScreen>
 
 =head1 AUTHOR
 
@@ -233,7 +269,7 @@ Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 by Kenichi Ishigaki
+Copyright (C) 2005-2006 by Kenichi Ishigaki
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

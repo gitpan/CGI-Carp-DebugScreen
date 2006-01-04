@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::TT;
   use warnings;
   use Template;
 
-  our $VERSION = '0.04';
+  our $VERSION = '0.05';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -25,19 +25,22 @@ package CGI::Carp::DebugScreen::TT;
 [% error_message %]
 </div>
 [% END %]
+[% BLOCK navi %]
 <div class="navi">
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
-[% IF watchlist %]
+[% IF watchlist.0 %]
 [<a href="#watch">watchlist</a>]
 [% END %]
-[% IF modules %]
+[% IF modules.0 %]
 [<a href="#modules">modules</a>]
 [% END %]
-[% IF environment %]
+[% IF environment.0 %]
 [<a href="#environment">environment</a>]
 [% END %]
 </div>
+[% END %]
+[% INCLUDE navi %]
 <div class="box">
 <h2><a name="traces">Stack Traces</a></h2>
 <ul id="traces">
@@ -53,20 +56,8 @@ package CGI::Carp::DebugScreen::TT;
 [% END %]
 </ul>
 </div>
-[% IF watchlist %]
-<div class="navi">
-[<a href="#top">top</a>]
-[<a href="#traces">traces</a>]
-[% IF watchlist %]
-[<a href="#watch">watchlist</a>]
-[% END %]
-[% IF modules %]
-[<a href="#modules">modules</a>]
-[% END %]
-[% IF environment %]
-[<a href="#environment">environment</a>]
-[% END %]
-</div>
+[% IF watchlist.0 %]
+[% INCLUDE navi %]
 <div class="box">
 <h2><a name="watch">Watch List</a></h2>
 <ul id="watch">
@@ -81,20 +72,8 @@ package CGI::Carp::DebugScreen::TT;
 </ul>
 </div>
 [% END %]
-[% IF modules %]
-<div class="navi">
-[<a href="#top">top</a>]
-[<a href="#traces">traces</a>]
-[% IF watchlist %]
-[<a href="#watch">watchlist</a>]
-[% END %]
-[% IF modules %]
-[<a href="#modules">modules</a>]
-[% END %]
-[% IF environment %]
-[<a href="#environment">environment</a>]
-[% END %]
-</div>
+[% IF modules.0 %]
+[% INCLUDE navi %]
 <div class="box">
 <h2><a name="modules">Included Modules</a></h2>
 <ul id="modules">
@@ -104,20 +83,8 @@ package CGI::Carp::DebugScreen::TT;
 </ul>
 </div>
 [% END %]
-[% IF environment %]
-<div class="navi">
-[<a href="#top">top</a>]
-[<a href="#traces">traces</a>]
-[% IF watchlist %]
-[<a href="#watch">watchlist</a>]
-[% END %]
-[% IF modules %]
-[<a href="#modules">modules</a>]
-[% END %]
-[% IF environment %]
-[<a href="#environment">environment</a>]
-[% END %]
-</div>
+[% IF environment.0 %]
+[% INCLUDE navi %]
 <div class="box">
 <h2><a name="environment">Environmental Variables</a></h2>
 <table id="environment">

@@ -1,8 +1,13 @@
 Revision history for Perl extension CGI::Carp::DebugScreen.
 
+0.08  Wed Jan 4 16:09 2006
+        - fixed TT and DefaultView templates to hide the box and
+          the navigation without data
+
 0.07  Tue Jan 3 15:57 2006
         - added CGI::Carp::DebugScreen::Dumper and a watchlist function
         - templates output the C::C::DS' version and the engine name
+        - separated tests on TT and HTML::Template
 
 0.06  Thu Dec 27 23:03 2005
         - fixed a parsing error (with <DATA> line)

@@ -3,7 +3,7 @@ package CGI::Carp::DebugScreen::DefaultView;
   use strict;
   use warnings;
 
-  our $VERSION = '0.04';
+  our $VERSION = '0.05';
 
   sub show {
     my ($pkg, %options) = @_;
@@ -33,17 +33,17 @@ package CGI::Carp::DebugScreen::DefaultView;
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
 EOT
-    if ($options{watchlist}) {
+    if (@{ $options{watchlist} }) {
       print <<"EOT";
 [<a href="#watch">watchlist</a>]
 EOT
     }
-    if ($options{modules}) {
+    if (@{ $options{modules} }) {
       print <<"EOT";
 [<a href="#modules">modules</a>]
 EOT
     }
-    if ($options{environment}) {
+    if (@{ $options{environment} }) {
       print <<"EOT";
 [<a href="#environment">environment</a>]
 EOT
@@ -127,7 +127,7 @@ EOT
 </div>
 EOT
 
-    if ($options{watchlist}) {
+    if (@{ $options{watchlist} }) {
       _navi(%options);
 
       print <<"EOT";
@@ -154,7 +154,7 @@ EOT
 EOT
     }
 
-    if ($options{modules}) {
+    if (@{ $options{modules} }) {
       _navi(%options);
 
       print <<"EOT";
@@ -177,7 +177,7 @@ EOT
 EOT
     }
 
-    if ($options{environment}) {
+    if (@{ $options{environment} }) {
       _navi(%options);
 
       print <<"EOT";

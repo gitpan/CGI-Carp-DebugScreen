@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.09';
+  our $VERSION = '0.10';
 
   BEGIN {
     my $MyDebug = 0;
@@ -180,6 +180,7 @@ EOS
     my ($pkg, $errstr) = @_;
 
     my $first_message = '';
+    my $no_more_first;
     my @traces = grep {
         my $caller = $_->{caller} || '';
         (
@@ -191,7 +192,8 @@ EOS
       map {
         my $line = $_;
         my ($message, $caller, $line_no) = $line =~ /^(?:\s*)(.*?)(?: called)? at (\S+) line (.+)$/;
-        $first_message .= $line if !defined $message;
+        $first_message .= "$line<br>" if !defined $message && !$no_more_first;
+        $no_more_first = 1 if defined $message;
         $first_message = $message unless $first_message;
         $caller  ||= '';
         $line_no ||= 0;

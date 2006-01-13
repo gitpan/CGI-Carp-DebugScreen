@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.08';
+  our $VERSION = '0.09';
 
   BEGIN {
     my $MyDebug = 0;
@@ -189,19 +189,20 @@ EOS
         ) ? 0 : 1;
       }
       map {
-      my $line = $_;
-      my ($message, $caller, $line_no) = $line =~ /^(?:\s*)(.*?)(?: called)? at (\S+) line (.+)$/;
-      $first_message = $message unless $first_message && defined $message;
-      $caller  ||= '';
-      $line_no ||= 0;
-      my $contents = _get_contents($caller,$line_no);
-      +{
-         message  => $message,
-         caller   => $caller,
-         contents => $contents,
-         line     => $line_no,
-       }
-    } split(/\n/,$errstr);
+        my $line = $_;
+        my ($message, $caller, $line_no) = $line =~ /^(?:\s*)(.*?)(?: called)? at (\S+) line (.+)$/;
+        $first_message .= $line if !defined $message;
+        $first_message = $message unless $first_message;
+        $caller  ||= '';
+        $line_no ||= 0;
+        my $contents = _get_contents($caller,$line_no);
+        +{
+           message  => $message,
+           caller   => $caller,
+           contents => $contents,
+           line     => $line_no,
+         }
+      } split(/\n/,$errstr);
 
     my $error_at = $traces[$#traces]->{caller};
 

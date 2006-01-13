@@ -1,5 +1,8 @@
 Revision history for Perl extension CGI::Carp::DebugScreen.
 
+0.09  Fri Jan 13 23:19 2006
+        - fixed a parsing error to show multi-lines message correctly
+
 0.08  Wed Jan 4 16:09 2006
         - fixed TT and DefaultView templates to hide the box and
           the navigation without data

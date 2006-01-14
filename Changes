@@ -1,5 +1,12 @@
 Revision history for Perl extension CGI::Carp::DebugScreen.
 
+0.11  Sat Jan 14 22:55 2006
+        - now Dumper (watchlist) can ignore overloading, thus
+          poking into the object further.
+
+0.10  Sat Jan 14 05:47 2006
+        - fixed a parsing error
+
 0.09  Fri Jan 13 23:19 2006
         - fixed a parsing error to show multi-lines message correctly
 

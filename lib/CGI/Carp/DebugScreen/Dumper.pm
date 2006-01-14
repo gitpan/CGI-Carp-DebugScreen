@@ -3,7 +3,11 @@ package CGI::Carp::DebugScreen::Dumper;
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
+
+  my $IgnoreOverload;
+
+  sub ignore_overload { shift; $IgnoreOverload = shift; }
 
   sub dump {
     my ($pkg, $thingy) = @_;
@@ -15,6 +19,8 @@ package CGI::Carp::DebugScreen::Dumper;
     my $thingy = shift;
 
     my $res = '';
+
+    require overload if $IgnoreOverload;
 
     if (!defined $thingy) {
       $res .= 'undef';
@@ -50,11 +56,12 @@ package CGI::Carp::DebugScreen::Dumper;
     }
     elsif (my $name = ref $thingy) {
       my $blessed;
-      if ($thingy =~ /=HASH/) {
+      my $strval = $IgnoreOverload ? overload::StrVal($thingy) : '';
+      if ($thingy =~ /=HASH/ or $strval =~ /=HASH/) {
         my %hash = %{ $thingy };
         $blessed = \%hash;
       }
-      elsif ($thingy =~ /=ARRAY/) {
+      elsif ($thingy =~ /=ARRAY/ or $strval =~ /=ARRAY/) {
         my @array = @{ $thingy };
         $blessed = \@array;
       }
@@ -98,25 +105,39 @@ CGI::Carp::DebugScreen::Dumper - Dump a variable as an HTML table
 
   use CGI::Carp::DebugScreen::Dumper;
 
+  # if you want to poke into further
+  CGI::Carp::DebugScreen::Dumper->ignore_overload(1);
+
   my $table = CGI::Carp::DebugScreen::Dumper->dump($thingy);
 
   print "Content-type:text/html\n\n", $table;
 
 =head1 DESCRIPTION
 
-This module dumps the contents of a variable (supposedly, a reference) as an HTML table. If the variable has something unfit for an HTML output, it dumps alternative texts such as '*BINARY*', '*CODE*', or '*GLOB*'. It also escapes every key and value, so all you have to do is print some headers (likely to have been printed) and the dumped table. Dead easy.
+This module dumps the contents of a variable (supposedly, a reference)
+as an HTML table. If the variable has something unfit for an HTML output,
+it dumps alternative texts such as '*BINARY*', '*CODE*', or '*GLOB*'.
+It also escapes every key and value, so all you have to do is print some
+headers (likely to have been printed) and the dumped table. Dead easy.
 
 =head1 METHOD
 
-Currently this module has only one package method.
+Currently this module has only two package methods.
 
 =head2 dump()
 
 takes a variable (supposedly, a reference) and returns an HTML table.
 
+=head2 ignore_overload()
+
+If set true, dump() will ignore overloading (to stringify, maybe) and
+poke into the object further.
+
 =head1 TODO
 
-I'm afraid that this module should have another (and shorter) name and stand alone. The dumps() method should take array, hash, or multiple variables. 
+I'm afraid that this module should have another (and shorter) name and
+stand alone. The dumps() method should take array, hash, or multiple
+variables. 
 
 =head1 SEE ALSO
 
@@ -130,6 +151,7 @@ Kenichi Ishigaki, E<lt>ishigaki@cpan.orgE<gt>
 
 Copyright (C) 2006 by Kenichi Ishigaki
 
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+This library is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

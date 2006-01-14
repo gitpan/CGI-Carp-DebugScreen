@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.10';
+  our $VERSION = '0.11';
 
   BEGIN {
     my $MyDebug = 0;
@@ -22,6 +22,7 @@ package CGI::Carp::DebugScreen;
   my $ShowMod;
   my $ShowEnv;
   my $ShowRawError;
+  my $IgnoreOverload;
   my $DebugTemplate;
   my $ErrorTemplate;
   my $WatchList = {};
@@ -149,15 +150,16 @@ EOS
     while(my ($key, $value) = each %options) {
       next unless defined $value;
       $key = lc $key;
-      $Debug         = $value if $key =~ /^d(?:ebug)?$/;
-      $Engine        = $value if $key =~ /^e(?:ngine)?$/;
-      $ShowLines     = $value if $key =~ /^l(?:ines)?$/;
-      $ShowMod       = $value if $key =~ /^m(?:od(?:ules)?)?$/;
-      $ShowEnv       = $value if $key =~ /^env(?:ironment)?$/;
-      $ShowRawError  = $value if $key =~ /^raw(?:_error)?$/;
-      $DebugTemplate = $value if $key =~ /^d(?:ebug_)?t(?:emplate)?$/;
-      $ErrorTemplate = $value if $key =~ /^e(?:rror_)?t(?:emplate)?$/;
-      $Style         = $value if $key =~ /^s(?:tyle)?$/;
+      $Debug          = $value if $key =~ /^d(?:ebug)?$/;
+      $Engine         = $value if $key =~ /^e(?:ngine)?$/;
+      $ShowLines      = $value if $key =~ /^l(?:ines)?$/;
+      $ShowMod        = $value if $key =~ /^m(?:od(?:ules)?)?$/;
+      $ShowEnv        = $value if $key =~ /^env(?:ironment)?$/;
+      $ShowRawError   = $value if $key =~ /^raw(?:_error)?$/;
+      $IgnoreOverload = $value if $key =~ /^(?:ignore_)?overload$/;
+      $DebugTemplate  = $value if $key =~ /^d(?:ebug_)?t(?:emplate)?$/;
+      $ErrorTemplate  = $value if $key =~ /^e(?:rror_)?t(?:emplate)?$/;
+      $Style          = $value if $key =~ /^s(?:tyle)?$/;
     }
   }
 
@@ -168,6 +170,7 @@ EOS
   sub show_modules       { shift; $ShowMod = shift; }
   sub show_environment   { shift; $ShowEnv = shift; }
   sub show_raw_error     { shift; $ShowRawError = shift; }
+  sub ignore_overload    { shift; $IgnoreOverload = shift; }
 
   sub add_watchlist      {
     my ($pkg, %hash) = @_;
@@ -229,6 +232,7 @@ EOS
     my @watchlist = ();
     if (%{ $WatchList }) {
       require CGI::Carp::DebugScreen::Dumper;
+      CGI::Carp::DebugScreen::Dumper->ignore_overload($IgnoreOverload);
       foreach my $key (sort {$a cmp $b} keys %{ $WatchList }) {
         push @watchlist, {
           key   => $key,
@@ -310,6 +314,7 @@ applications
     lines       => 5,
     modules     => 1,
     environment => 1,
+    overload    => 1,
     raw_error   => 0,
   );
 
@@ -353,6 +358,7 @@ Enjoy.
     modules     => 1,
     environment => 1,
     raw_error   => 0,
+    overload    => 1,
     debug_template => $DebugTemplate,
     error_template => $ErrorTemplate,
     style       => $Style,
@@ -390,6 +396,12 @@ The default value is undef.
 If set true, debug screen shows a raw error (CGI::Carp::confessed) 
 message. The default value is undef.
 
+=head2 ignore_overload (or overload)
+
+If set true, watchlist dumper (CGI::Carp::DebugScreen::Dumper)
+ignores overloading of the objects and pokes into further.
+The default value is undef.
+
 =head2 debug_template (or dt)
 
 =head2 error_template (or et)
@@ -408,6 +420,8 @@ want to set these templates through correspondent methods.
 =head2 show_environment
 
 =head2 show_raw_error
+
+=head2 ignore_overload
 
 =head2 set_debug_template
 

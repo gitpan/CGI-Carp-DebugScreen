@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::TT;
   use warnings;
   use Template;
 
-  our $VERSION = '0.05';
+  our $VERSION = '0.06';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -164,6 +164,12 @@ CGI::Carp::DebugScreen::TT - CGI::Carp::DebugScreen View Class with Template Too
 =head1 DESCRIPTION
 
 One of the ready-made view classes for CGI::Carp::DebugScreen.
+
+=head1 METHOD
+
+=head2 show
+
+Called internally from CGI::Carp::DebugScreen.
 
 =head1 SEE ALSO
 

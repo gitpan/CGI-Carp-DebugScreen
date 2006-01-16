@@ -5,6 +5,8 @@ README
 t/00_use.t
 t/01_ht.t
 t/01_tt.t
+t/02_pod.t
+t/02_podcoverage.t
 lib/CGI/Carp/DebugScreen.pm
 lib/CGI/Carp/DebugScreen/DefaultView.pm
 lib/CGI/Carp/DebugScreen/Dumper.pm

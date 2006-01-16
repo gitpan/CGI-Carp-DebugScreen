@@ -5,12 +5,12 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.11';
+  our $VERSION = '0.12';
 
   BEGIN {
     my $MyDebug = 0;
     CGI::Carp::set_message(
-      sub { __PACKAGE__->show(@_) }
+      sub { __PACKAGE__->_show(@_) }
     ) unless $MyDebug;
   }
 
@@ -179,7 +179,7 @@ EOS
     }
   }
 
-  sub show {
+  sub _show {
     my ($pkg, $errstr) = @_;
 
     my $first_message = '';
@@ -280,7 +280,7 @@ EOS
     return unless -f $file;
 
     my @contents;
-    if (open my $fh, '<'.$file) {
+    if (open my $fh, '<', $file) {
       my $ct = 0;
       while(my $line = <$fh>) {
         $ct++;
@@ -408,7 +408,7 @@ The default value is undef.
 
 =head2 style (or s)
 
-Overload the default templates and style if defined. But you may
+Overwrite the default templates and style if defined. But you may
 want to set these templates through correspondent methods.
 
 =head1 PACKAGE METHODS
@@ -447,7 +447,7 @@ header). And some more tests. Any ideas?
 
 =head1 SEE ALSO
 
-L<CGI::Carp>, L<CGI::Application::Plugin::DebugScreen>
+L<CGI::Carp>, L<CGI::Application::Plugin::DebugScreen>, L<Sledge::Plugin::DebugScreen>
 
 =head1 ACKNOWLEDGMENT
 

@@ -3,7 +3,7 @@ package CGI::Carp::DebugScreen::DefaultView;
   use strict;
   use warnings;
 
-  our $VERSION = '0.05';
+  our $VERSION = '0.06';
 
   sub show {
     my ($pkg, %options) = @_;
@@ -257,7 +257,14 @@ CGI::Carp::DebugScreen::DefaultView - CGI::Carp::DebugScreen View Class without 
 
 One of the ready-made view classes for CGI::Carp::DebugScreen.
 
-This is the default.
+This is the default. And this viewer doesn't support template
+overriding.
+
+=head1 METHOD
+
+=head2 show
+
+Called internally from CGI::Carp::DebugScreen.
 
 =head1 SEE ALSO
 

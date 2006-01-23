@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.12';
+  our $VERSION = '0.13';
 
   BEGIN {
     my $MyDebug = 0;
@@ -245,22 +245,22 @@ EOS
 
     $Engine = 'TT' if lc $Engine eq 'template'; # engine alias
 
-    my $viewer = __PACKAGE__.'::'.$Engine;
+    my $view = __PACKAGE__.'::'.$Engine;
 
-    eval "require $viewer";
+    eval "require $view";
     if ($@) {
       require CGI::Carp::DebugScreen::DefaultView;
-      $viewer = 'CGI::Carp::DebugScreen::DefaultView';
+      $view = 'CGI::Carp::DebugScreen::DefaultView';
     }
 
     my $error_message = $first_message.' at '.$traces[0]->{caller}.' line '.$traces[0]->{line};
 
-    $viewer->show(
+    my $html = $view->as_html(
       version        => $VERSION,
       debug          => $Debug,
       debug_tmpl     => $DebugTemplate,
       error_tmpl     => $ErrorTemplate,
-      viewer         => $viewer,
+      view           => $view,
       style          => $Style,
       error_at       => $error_at,
       error_message  => $error_message,
@@ -271,6 +271,39 @@ EOS
       environment    => \@environment,
       watchlist      => \@watchlist,
     );
+
+    # shamelessly stolen from CGI::Carp
+
+    if (exists $ENV{MOD_PERL}) {
+      my $r;
+      my $mod_perl;
+      if ($ENV{MOD_PERL_API_VERSION}) {
+        $mod_perl = 2;
+        require Apache2::RequestRec;
+        require Apache2::RequestIO;
+        require Apache2::RequestUtil;
+        require APR::Pool;
+        require ModPerl::Util;
+        require Apache2::Response;
+        $r = Apache2::RequestUtil->request;
+      }
+      else {
+        $r = Apache->request;
+      }
+      if ($r->bytes_sent) {
+        $r->print($html);
+        $mod_perl == 2 ? ModPerl::Util::exit(0) : $r->exit;
+      }
+      else {
+        if ($ENV{HTTP_USER_AGENT} =~ /MSIE/) {
+          $html = "<!-- " . (' ' x 513) . " -->\n$html";
+        }
+        $r->custom_response(500, $html);
+      }
+    }
+    else {
+      print $html;
+    }
   }
 
   sub _get_contents {

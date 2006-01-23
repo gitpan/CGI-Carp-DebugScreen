@@ -4,7 +4,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
   use warnings;
   use HTML::Template;
 
-  our $VERSION = '0.04';
+  our $VERSION = '0.05';
 
   my $DebugTemplate =<<'EOT';
 <html>
@@ -81,7 +81,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </table>
 </div>
 </TMPL_IF>
-<p class="footer">CGI::Carp::DebugScreen <TMPL_VAR NAME="version" ESCAPE=HTML>. Output via <TMPL_VAR NAME="viewer" ESCAPE=HTML></p>
+<p class="footer">CGI::Carp::DebugScreen <TMPL_VAR NAME="version" ESCAPE=HTML>. Output via <TMPL_VAR NAME="view" ESCAPE=HTML></p>
 </div>
 </body>
 </html>
@@ -104,7 +104,7 @@ EOT
 </html>
 EOT
 
-  sub show {
+  sub as_html {
     my ($pkg, %options) = @_;
 
     $options{error_tmpl} ||= $ErrorTemplate;
@@ -119,7 +119,7 @@ EOT
 
     $t->param(%options);
 
-    print $t->output;
+    return $t->output;
   }
 }
 
@@ -143,9 +143,9 @@ One of the ready-made view classes for CGI::Carp::DebugScreen.
 
 =head1 METHOD
 
-=head2 show
+=head2 as_html
 
-Called internally from CGI::Carp::DebugScreen.
+will be called internally from CGI::Carp::DebugScreen.
 
 =head1 SEE ALSO
 

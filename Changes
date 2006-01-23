@@ -1,5 +1,10 @@
 Revision history for Perl extension CGI::Carp::DebugScreen.
 
+0.13  Mon Jan 23 17:05 2006
+        - changed internal behavior to support mod_perl (1, and
+          probably 2)
+        - changed view's (internal) APIs (view->as_html)
+
 0.12  Mon Jan 16 16:15 2006
         - added link to Sledge::Plugin::DebugScreen
         - added pod / pod-coverage testing and fixed pods.

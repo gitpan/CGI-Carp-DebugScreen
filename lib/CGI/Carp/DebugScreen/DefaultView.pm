@@ -3,9 +3,9 @@ package CGI::Carp::DebugScreen::DefaultView;
   use strict;
   use warnings;
 
-  our $VERSION = '0.06';
+  our $VERSION = '0.07';
 
-  sub show {
+  sub as_html {
     my ($pkg, %options) = @_;
 
     delete $options{debug_tmpl};
@@ -28,29 +28,31 @@ package CGI::Carp::DebugScreen::DefaultView;
   sub _navi {
     my %options = @_;
 
-    print <<"EOT";
+    my $html =<<"EOT";
 <div class="navi">
 [<a href="#top">top</a>]
 [<a href="#traces">traces</a>]
 EOT
     if (@{ $options{watchlist} }) {
-      print <<"EOT";
+      $html .=<<"EOT";
 [<a href="#watch">watchlist</a>]
 EOT
     }
     if (@{ $options{modules} }) {
-      print <<"EOT";
+      $html .=<<"EOT";
 [<a href="#modules">modules</a>]
 EOT
     }
     if (@{ $options{environment} }) {
-      print <<"EOT";
+      $html .=<<"EOT";
 [<a href="#environment">environment</a>]
 EOT
     }
-    print <<"EOT";
+    $html .=<<"EOT";
 </div>
 EOT
+
+    return $html;
 }
 
   sub _debug {
@@ -58,7 +60,7 @@ EOT
 
     my $error_at = _escape($options{error_at});
 
-    print <<"EOT";
+    my $html =<<"EOT";
 <html>
 <head>
 <title>Debug Screen</title>
@@ -71,21 +73,21 @@ $options{style}
 EOT
 
     if ($options{show_raw_error}) {
-      print <<"EOT";
+      $html .=<<"EOT";
 <pre class="raw_error">$options{raw_error}</pre>
 EOT
     }
     else {
-      print <<"EOT";
+      $html .=<<"EOT";
 <div class="box">
 $options{error_message}
 </div>
 EOT
     }
 
-    _navi(%options);
+    $html .= _navi(%options);
 
-    print <<"EOT";
+    $html .=<<"EOT";
 <div class="box">
 <h2><a name="traces">Stack Traces</a></h2>
 <ul id="traces">
@@ -94,43 +96,43 @@ EOT
     foreach my $trace (@{ $options{traces} }) {
       my $caller = _escape($trace->{caller});
       my $line   = $trace->{line};
-      print <<"EOT";
+      $html .=<<"EOT";
 <li>$caller LINE : $line</li>
 <table class="code">
 EOT
 
       foreach my $line (@{ $trace->{contents} }) {
         if ($line->{hit}) {
-          print <<"EOT";
+          $html .=<<"EOT";
 <tr class="hit">
 EOT
         }
         else {
-          print <<"EOT";
+          $html .=<<"EOT";
 <tr>
 EOT
         }
         my $line_no   = _escape($line->{no});
         my $line_body = _escape($line->{line});
-        print <<"EOT";
+        $html .=<<"EOT";
 <td class="num">$line_no:</td><td>$line_body</td>
 </tr>
 EOT
       }
-      print <<"EOT";
+      $html .=<<"EOT";
 </table>
 EOT
     }
 
-    print <<"EOT";
+    $html .=<<"EOT";
 </ul>
 </div>
 EOT
 
     if (@{ $options{watchlist} }) {
-      _navi(%options);
+      $html .= _navi(%options);
 
-      print <<"EOT";
+      $html .=<<"EOT";
 <div class="box">
 <h2><a name="watch">Watch List</a></h2>
 <ul id="watch">
@@ -139,7 +141,7 @@ EOT
       foreach my $watch (@{ $options{watchlist} }) {
         my $key   = _escape($watch->{key});
         my $table = $watch->{table};
-        print <<"EOT";
+        $html .=<<"EOT";
 <li>
 <b>$key</b><br>
 <div class="scrollable">
@@ -148,16 +150,16 @@ $table
 </li>
 EOT
       }
-      print <<"EOT";
+      $html .=<<"EOT";
 </ul>
 </div>
 EOT
     }
 
     if (@{ $options{modules} }) {
-      _navi(%options);
+      $html .= _navi(%options);
 
-      print <<"EOT";
+      $html .=<<"EOT";
 <div class="box">
 <h2><a name="modules">Included Modules</a></h2>
 <ul id="modules">
@@ -167,20 +169,20 @@ EOT
         my $package = _escape($module->{package});
         my $file    = _escape($module->{file});
 
-        print <<"EOT";
+        $html .=<<"EOT";
 <li>$package ($file)</li>
 EOT
       }
-      print <<"EOT";
+      $html .=<<"EOT";
 </ul>
 </div>
 EOT
     }
 
     if (@{ $options{environment} }) {
-      _navi(%options);
+      $html .= _navi(%options);
 
-      print <<"EOT";
+      $html .=<<"EOT";
 <div class="box">
 <h2><a name="environment">Environmental Variables</a></h2>
 <table id="environment">
@@ -189,27 +191,29 @@ EOT
       foreach my $env (@{ $options{environment} }) {
         my $key   = _escape($env->{key});
         my $value = _escape($env->{value});
-        print <<"EOT";
+        $html .=<<"EOT";
 <tr>
 <td>$key</td><td><div class="scrollable">$value</div><//td>
 </tr>
 EOT
       }
-      print <<"EOT";
+      $html .=<<"EOT";
 </table>
 </div>
 EOT
     }
 
     my $version = _escape($options{version});
-    my $viewer  = _escape($options{viewer});
+    my $view    = _escape($options{view});
 
-    print <<"EOT";
-<p class="footer">CGI::Carp::DebugScreen $version. Output via $viewer</p>
+    $html .=<<"EOT";
+<p class="footer">CGI::Carp::DebugScreen $version. Output via $view</p>
 </div>
 </body>
 </html>
 EOT
+
+    return $html;
   }
 
   sub _error {
@@ -219,7 +223,7 @@ EOT
       ( $_, _escape($options{$_}) )
     } keys %options;
 
-    print <<"EOT";
+    my $html =<<"EOT";
 <html>
 <head>
 <title>An unexpected error has been detected</title>
@@ -233,6 +237,8 @@ $options{style}
 </body>
 </html>
 EOT
+
+    return $html;
   }
 
 }
@@ -257,14 +263,14 @@ CGI::Carp::DebugScreen::DefaultView - CGI::Carp::DebugScreen View Class without 
 
 One of the ready-made view classes for CGI::Carp::DebugScreen.
 
-This is the default. And this viewer doesn't support template
+This is the default. And this view doesn't support template
 overriding.
 
 =head1 METHOD
 
-=head2 show
+=head2 as_html
 
-Called internally from CGI::Carp::DebugScreen.
+will be called internally from CGI::Carp::DebugScreen.
 
 =head1 SEE ALSO
 

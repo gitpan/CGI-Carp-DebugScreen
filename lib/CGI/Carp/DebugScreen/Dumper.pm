@@ -3,7 +3,7 @@ package CGI::Carp::DebugScreen::Dumper;
   use strict;
   use warnings;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.03';
 
   my $IgnoreOverload;
 
@@ -130,7 +130,7 @@ takes a variable (supposedly, a reference) and returns an HTML table.
 
 =head2 ignore_overload()
 
-If set true, dump() will ignore overloading (to stringify, maybe) and
+If set to true, dump() will ignore overloading (to stringify, maybe) and
 poke into the object further.
 
 =head1 TODO

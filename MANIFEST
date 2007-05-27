@@ -1,15 +1,15 @@
 Changes
+lib/CGI/Carp/DebugScreen.pm
+lib/CGI/Carp/DebugScreen/DefaultView.pm
+lib/CGI/Carp/DebugScreen/Dumper.pm
+lib/CGI/Carp/DebugScreen/HTML/Template.pm
+lib/CGI/Carp/DebugScreen/TT.pm
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
+META.yml
 README
 t/00_use.t
 t/01_ht.t
 t/01_tt.t
 t/02_pod.t
 t/02_podcoverage.t
-lib/CGI/Carp/DebugScreen.pm
-lib/CGI/Carp/DebugScreen/DefaultView.pm
-lib/CGI/Carp/DebugScreen/Dumper.pm
-lib/CGI/Carp/DebugScreen/TT.pm
-lib/CGI/Carp/DebugScreen/HTML/Template.pm
-META.yml                                 Module meta-data (added by MakeMaker)

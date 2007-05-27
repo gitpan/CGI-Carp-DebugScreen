@@ -5,7 +5,7 @@ package CGI::Carp::DebugScreen;
   use Exporter;
   use CGI::Carp qw/fatalsToBrowser/;
 
-  our $VERSION = '0.13';
+  our $VERSION = '0.14';
 
   BEGIN {
     my $MyDebug = 0;
@@ -335,8 +335,7 @@ __END__
 
 =head1 NAME
 
-CGI::Carp::DebugScreen - provides a decent debug screen for Web 
-applications
+CGI::Carp::DebugScreen - provides a decent debug screen for Web applications
 
 =head1 SYNOPSIS
 
@@ -399,7 +398,7 @@ Enjoy.
 
 =head2 debug (or d)
 
-If set true, debug screen appears; if false, error screen does.
+If set to true, debug screen appears; if false, error screen does.
 The default value is 1. Setting some environmental variable here
 is a good idea.
 
@@ -416,22 +415,22 @@ The default value is 3.
 
 =head2 modules (or m / mod)
 
-If set true, debug screen shows a list of included modules.
+If set to true, debug screen shows a list of included modules.
 The default value is undef.
 
 =head2 environment (or env)
 
-If set true, debug screen shows a table of environmental variables.
+If set to true, debug screen shows a table of environmental variables.
 The default value is undef.
 
 =head2 raw_error (or raw)
 
-If set true, debug screen shows a raw error (CGI::Carp::confessed) 
+If set to true, debug screen shows a raw error (CGI::Carp::confessed) 
 message. The default value is undef.
 
 =head2 ignore_overload (or overload)
 
-If set true, watchlist dumper (CGI::Carp::DebugScreen::Dumper)
+If set to true, watchlist dumper (CGI::Carp::DebugScreen::Dumper)
 ignores overloading of the objects and pokes into further.
 The default value is undef.
 

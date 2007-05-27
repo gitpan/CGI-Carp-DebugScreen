@@ -1,11 +1,14 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         CGI-Carp-DebugScreen
-version:      0.13
-version_from: lib/CGI/Carp/DebugScreen.pm
-installdirs:  site
-requires:
+--- #YAML:1.0
+name:                CGI-Carp-DebugScreen
+version:             0.14
+abstract:            provides a decent debug screen for Web applications
+license:             perl
+generated_by:        ExtUtils::MakeMaker version 6.32
+distribution_type:   module
+requires:     
     CGI::Carp:                     0
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
+    version: 1.2
+author:
+    - Kenichi Ishigaki <ishigaki@cpan.org>

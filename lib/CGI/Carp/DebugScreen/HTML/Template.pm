@@ -1,12 +1,12 @@
 package CGI::Carp::DebugScreen::HTML::Template;
-{
-  use strict;
-  use warnings;
-  use HTML::Template;
 
-  our $VERSION = '0.05';
+use strict;
+use warnings;
+use HTML::Template;
 
-  my $DebugTemplate =<<'EOT';
+our $VERSION = '0.15';
+
+my $DebugTemplate =<<'EOT';
 <html>
 <head>
 <title>Debug Screen</title>
@@ -25,14 +25,14 @@ package CGI::Carp::DebugScreen::HTML::Template;
 <TMPL_VAR NAME="error_message">
 </div>
 </TMPL_IF>
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#stacktraces">stacktraces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
-<h2><a name="traces">Stack Traces</a></h2>
-<ul id="traces">
-<TMPL_LOOP NAME="traces">
+<h2><a name="stacktraces">Stacktraces</a></h2>
+<ul id="stacktraces">
+<TMPL_LOOP NAME="stacktraces">
 <li><TMPL_VAR NAME="caller" ESCAPE=HTML> LINE : <TMPL_VAR NAME="line"></li>
 <table class="code">
-<TMPL_LOOP NAME="contents">
+<TMPL_LOOP NAME="context">
 <TMPL_IF NAME="hit"><tr class="hit"><TMPL_ELSE><tr></TMPL_IF>
 <td class="num"><TMPL_VAR NAME="no" ESCAPE=HTML>:</td><td><TMPL_VAR NAME="line" ESCAPE=HTML></td>
 </tr>
@@ -42,7 +42,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </ul>
 </div>
 <TMPL_IF NAME="watchlist">
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#stacktraces">stacktraces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
 <h2><a name="watch">Watch List</a></h2>
 <ul id="watch">
@@ -50,7 +50,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 <li>
 <b><TMPL_VAR NAME="key" ESCAPE=HTML></b>
 <div class="scrollable">
-<TMPL_VAR NAME="table">
+<TMPL_VAR NAME="value">
 </div>
 </li>
 </TMPL_LOOP>
@@ -58,7 +58,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </div>
 </TMPL_IF>
 <TMPL_IF NAME="modules">
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#stacktraces">stacktraces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
 <h2><a name="modules">Included Modules</a></h2>
 <ul id="modules">
@@ -69,7 +69,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </div>
 </TMPL_IF>
 <TMPL_IF NAME="environment">
-<div class="navi">[<a href="#top">top</a>] [<a href="#traces">traces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
+<div class="navi">[<a href="#top">top</a>] [<a href="#stacktraces">stacktraces</a>]<TMPL_IF NAME="watchlist"> [<a href="#watch">watchlist</a>]</TMPL_IF><TMPL_IF NAME="modules"> [<a href="#modules">modules</a>]</TMPL_IF><TMPL_IF NAME="environment"> [<a href="#environment">environment</a>]</TMPL_IF></div>
 <div class="box">
 <h2><a name="environment">Environmental Variables</a></h2>
 <table id="environment">
@@ -87,7 +87,7 @@ package CGI::Carp::DebugScreen::HTML::Template;
 </html>
 EOT
 
-  my $ErrorTemplate =<<'EOT';
+my $ErrorTemplate =<<'EOT';
 <html>
 <head>
 <title>An unexpected error has been detected</title>
@@ -104,31 +104,31 @@ EOT
 </html>
 EOT
 
-  sub as_html {
-    my ($pkg, %options) = @_;
+sub as_html {
+  my ($pkg, %options) = @_;
 
-    $options{error_tmpl} ||= $ErrorTemplate;
-    $options{debug_tmpl} ||= $DebugTemplate;
+  $options{error_tmpl} ||= $ErrorTemplate;
+  $options{debug_tmpl} ||= $DebugTemplate;
 
-    my $tmpl = $options{debug} ? $options{debug_tmpl} : $options{error_tmpl};
+  my $tmpl = $options{debug} ? $options{debug_tmpl} : $options{error_tmpl};
 
-    my $t = HTML::Template->new(
-      scalarref => \$tmpl,
-      die_on_bad_params => 0,
-    );
+  my $t = HTML::Template->new(
+    scalarref => \$tmpl,
+    die_on_bad_params => 0,
+  );
 
-    $t->param(%options);
+  $t->param(%options);
 
-    return $t->output;
-  }
+  return $t->output;
 }
 
 1;
+
 __END__
 
 =head1 NAME
 
-CGI::Carp::DebugScreen::HTML::Template - CGI::Carp::DebugScreen View Class with HTML::Template
+CGI::Carp::DebugScreen::HTML::Template - CGI::Carp::DebugScreen Renderer with HTML::Template
 
 =head1 SYNOPSIS
 
@@ -139,13 +139,13 @@ CGI::Carp::DebugScreen::HTML::Template - CGI::Carp::DebugScreen View Class with 
 
 =head1 DESCRIPTION
 
-One of the ready-made view classes for CGI::Carp::DebugScreen.
+One of the ready-made view (renderer) classes for L<CGI::Carp::DebugScreen>.
 
 =head1 METHOD
 
 =head2 as_html
 
-will be called internally from CGI::Carp::DebugScreen.
+will be called internally from L<CGI::Carp::DebugScreen>.
 
 =head1 SEE ALSO
 

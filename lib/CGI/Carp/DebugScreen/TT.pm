@@ -1,114 +1,114 @@
 package CGI::Carp::DebugScreen::TT;
-{
-  use strict;
-  use warnings;
-  use Template;
 
-  our $VERSION = '0.07';
+use strict;
+use warnings;
+use Template;
 
-  my $DebugTemplate =<<'EOT';
+our $VERSION = '0.15';
+
+my $DebugTemplate =<<'EOT';
 <html>
 <head>
 <title>Debug Screen</title>
-[% IF style %]
-[% style %]
-[% END %]
+[%- IF style %]
+[%- style %]
+[%- END %]
 </head>
 <body>
 <a name="top"></a>
 <div id="page">
 <h1>[% error_at | html %]</h1>
-[% IF show_raw_error %]
+[%- IF show_raw_error %]
 <pre class="raw_error">[% raw_error %]</pre>
-[% ELSE %]
+[%- ELSE %]
 <div class="box">
-[% error_message %]
+[%- error_message %]
 </div>
-[% END %]
-[% BLOCK navi %]
+[%- END %]
+[%- BLOCK navi %]
 <div class="navi">
 [<a href="#top">top</a>]
-[<a href="#traces">traces</a>]
-[% IF watchlist.0 %]
+[<a href="#stacktraces">stacktraces</a>]
+[%- IF watchlist.0 %]
 [<a href="#watch">watchlist</a>]
-[% END %]
-[% IF modules.0 %]
+[%- END %]
+[%- IF modules.0 %]
 [<a href="#modules">modules</a>]
-[% END %]
-[% IF environment.0 %]
+[%- END %]
+[%- IF environment.0 %]
 [<a href="#environment">environment</a>]
-[% END %]
+[%- END %]
 </div>
-[% END %]
-[% INCLUDE navi %]
+[%- END %]
+[%- INCLUDE navi %]
 <div class="box">
-<h2><a name="traces">Stack Traces</a></h2>
-<ul id="traces">
-[% FOREACH trace = traces %]
-<li>[% trace.caller | html %] LINE : [% trace.line %]</li>
+<h2><a name="stacktraces">Stacktraces</a></h2>
+<ul id="stacktraces">
+[%- FOREACH stacktrace = stacktraces %]
+<li>[% stacktrace.caller | html %] LINE : [% stacktrace.line %]</li>
 <table class="code">
-[% FOREACH content = trace.contents %]
-[% IF content.hit %]<tr class="hit">[% ELSE %]<tr>[% END %]
-<td class="num">[% content.no | html %]:</td><td>[% content.line | html %]</td>
+[%- FOREACH context = stacktrace.context %]
+[%- IF context.hit %]<tr class="hit">[% ELSE %]<tr>[% END %]
+<td class="num">[% context.no | html %]:</td><td>[% context.line | html %]</td>
 </tr>
-[% END %]
+[%- END %]
 </table>
-[% END %]
+[%- END %]
 </ul>
 </div>
-[% IF watchlist.0 %]
-[% INCLUDE navi %]
+[%- IF watchlist.0 %]
+[%- INCLUDE navi %]
 <div class="box">
 <h2><a name="watch">Watch List</a></h2>
 <ul id="watch">
-[% FOREACH watch = watchlist %]
+[%- FOREACH watch = watchlist %]
 <li>
 <b>[% watch.key | html %]</b>
 <div class="scrollable">
-[% watch.table %]
+[%- watch.value %]
 </div>
 </li>
-[% END %]
+[%- END %]
 </ul>
 </div>
-[% END %]
-[% IF modules.0 %]
-[% INCLUDE navi %]
+[%- END %]
+[%- IF modules.0 %]
+[%- INCLUDE navi %]
 <div class="box">
 <h2><a name="modules">Included Modules</a></h2>
 <ul id="modules">
-[% FOREACH module = modules %]
+[%- FOREACH module = modules %]
 <li>[% module.package | html %] ([% module.file | html %])</li>
-[% END %]
+[%- END %]
 </ul>
 </div>
-[% END %]
-[% IF environment.0 %]
-[% INCLUDE navi %]
+[%- END %]
+[%- IF environment.0 %]
+[%- INCLUDE navi %]
 <div class="box">
 <h2><a name="environment">Environmental Variables</a></h2>
 <table id="environment">
-[% FOREACH env = environment %]
+[%- FOREACH env = environment %]
 <tr>
 <td>[% env.key | html %]</td><td><div class="scrollable">[% env.value | html %]</div><//td>
 </tr>
-[% END %]
+[%- END %]
 </table>
 </div>
-[% END %]
+[%- END %]
 <p class="footer">CGI::Carp::DebugScreen [% version %]. Output via [% view %]</p>
 </div>
 </body>
 </html>
 EOT
 
-  my $ErrorTemplate =<<'EOT';
+my $ErrorTemplate =<<'EOT';
 <html>
 <head>
 <title>An unexpected error has been detected</title>
-[% IF style %]
-[% style %]
-[% END %]
+[%- IF style %]
+[%- style %]
+[%- END %]
 </head>
 <body>
 <div id="page">
@@ -119,44 +119,42 @@ EOT
 </html>
 EOT
 
-  sub _escape {
-    my $str = shift;
+sub _escape {
+  my $str = shift;
 
-    $str =~ s/&/&amp;/g;
-    $str =~ s/>/&gt;/g;
-    $str =~ s/</&lt;/g;
-    $str =~ s/"/&quot;/g;
+  $str =~ s/&/&amp;/g;
+  $str =~ s/>/&gt;/g;
+  $str =~ s/</&lt;/g;
+  $str =~ s/"/&quot;/g;
 
-    $str;
-  }
+  $str;
+}
 
-  sub as_html {
-    my ($pkg, %options) = @_;
+sub as_html {
+  my ($pkg, %options) = @_;
 
-    $options{error_tmpl} ||= $ErrorTemplate;
-    $options{debug_tmpl} ||= $DebugTemplate;
+  $options{error_tmpl} ||= $ErrorTemplate;
+  $options{debug_tmpl} ||= $DebugTemplate;
 
-    my $tmpl = $options{debug} ? $options{debug_tmpl} : $options{error_tmpl};
+  my $tmpl = $options{debug} ? $options{debug_tmpl} : $options{error_tmpl};
 
-    my $t = Template->new(
-      FILTERS => {
-        html => sub { _escape(@_) }
-      } ,
-    );
+  my $t = Template->new(
+    FILTERS => { html => sub { _escape(@_) } }
+  );
 
-    my $html;
-    $t->process(\$tmpl, \%options, \$html) or $html = $t->error();
+  my $html;
+  $t->process(\$tmpl, \%options, \$html) or $html = $t->error();
 
-    return $html;
-  }
+  return $html;
 }
 
 1;
+
 __END__
 
 =head1 NAME
 
-CGI::Carp::DebugScreen::TT - CGI::Carp::DebugScreen View Class with Template Toolkit
+CGI::Carp::DebugScreen::TT - CGI::Carp::DebugScreen Renderer with Template Toolkit
 
 =head1 SYNOPSIS
 
@@ -166,13 +164,13 @@ CGI::Carp::DebugScreen::TT - CGI::Carp::DebugScreen View Class with Template Too
 
 =head1 DESCRIPTION
 
-One of the ready-made view classes for CGI::Carp::DebugScreen.
+One of the ready-made view (renderer) classes for L<CGI::Carp::DebugScreen>.
 
 =head1 METHOD
 
 =head2 as_html
 
-will be called internally from CGI::Carp::DebugScreen.
+will be called internally from L<CGI::Carp::DebugScreen>.
 
 =head1 SEE ALSO
 

@@ -1,5 +1,5 @@
-CGI-Carp-DebugScreen version 0.13
-=================================
+CGI-Carp-DebugScreen version
+============================
 
 CGI::Carp::DebugScreen provides decent debug/error screens for Web
 applications via CGI::Carp's set_message() function. You don't need

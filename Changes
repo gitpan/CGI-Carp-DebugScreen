@@ -1,52 +1,60 @@
-Revision history for Perl extension CGI::Carp::DebugScreen.
+Revision history for CGI::Carp::DebugScreen
 
-0.14  Sun May 27 14:45 2007
-        - maintenance release: no significant code changes
-        - added license to Makefile.PL
-        - updated version of META.yml
+0.15  2008/11/22
+  - major refactoring; internals are changed a lot
+  - now accepts any engine/view with "as_html" method
+  - some of the name of the options are changed and
+    waiting for deprecation. If you have used a custom
+    view, see the sources and find "XXX"s.
+  - added some tests
 
-0.13  Mon Jan 23 17:05 2006
-        - changed internal behavior to support mod_perl (1, and
-          probably 2)
-        - changed view's (internal) APIs (view->as_html)
+0.14  2007/05/27
+  - maintenance release: no significant code changes
+  - added license to Makefile.PL
+  - updated version of META.yml
 
-0.12  Mon Jan 16 16:15 2006
-        - added link to Sledge::Plugin::DebugScreen
-        - added pod / pod-coverage testing and fixed pods.
+0.13  2006/01/23
+  - changed internal behavior to support mod_perl (1, and
+    probably 2)
+  - changed view's (internal) APIs (view->as_html)
 
-0.11  Sat Jan 14 22:55 2006
-        - now Dumper (watchlist) can ignore overloading, thus
-          poking into the object further.
+0.12  2006/01/16
+  - added link to Sledge::Plugin::DebugScreen
+  - added pod / pod-coverage testing and fixed pods.
 
-0.10  Sat Jan 14 05:47 2006
-        - fixed a parsing error
+0.11  2006/01/14
+  - now Dumper (watchlist) can ignore overloading, thus
+    poking into the object further.
 
-0.09  Fri Jan 13 23:19 2006
-        - fixed a parsing error to show multi-lines message correctly
+0.10  2006/01/14
+  - fixed a parsing error
 
-0.08  Wed Jan 4 16:09 2006
-        - fixed TT and DefaultView templates to hide the box and
-          the navigation without data
+0.09  2006/01/13
+  - fixed a parsing error to show multi-lines message correctly
 
-0.07  Tue Jan 3 15:57 2006
-        - added CGI::Carp::DebugScreen::Dumper and a watchlist function
-        - templates output the C::C::DS' version and the engine name
-        - separated tests on TT and HTML::Template
+0.08  2006/01/04
+  - fixed TT and DefaultView templates to hide the box and
+    the navigation without data
 
-0.06  Thu Dec 27 23:03 2005
-        - fixed a parsing error (with <DATA> line)
+0.07  2006/01/03
+  - added CGI::Carp::DebugScreen::Dumper and a watchlist function
+  - templates output the C::C::DS' version and the engine name
+  - separated tests on TT and HTML::Template
 
-0.05  Thu Dec 27 16:12 2005
-        - fixed some 'uninitialized' errors
+0.06  2005/12/27
+  - fixed a parsing error (with <DATA> line)
 
-0.04  Thu Dec 25 17:46 2005
-        - fixed lt escape for DefaultView and TT
+0.05  2005/12/27
+  - fixed some 'uninitialized' errors
 
-0.03  Thu Dec 22 13:15 2005
-        - fixed a packaging error; sorry again
+0.04  2005/12/25
+  - fixed lt escape for DefaultView and TT
 
-0.02  Wed Dec 21 23:58 2005
-        - fixed a packaging error
+0.03  2005/12/22
+  - fixed a packaging error; sorry again
 
-0.01  Wed Dec 21 21:00 2005
-        - Initial release
+0.02  2005/12/21
+  - fixed a packaging error
+
+0.01  2005/12/21
+  - Initial release

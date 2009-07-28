@@ -5,7 +5,7 @@ use warnings;
 use Exporter;
 use CGI::Carp qw/fatalsToBrowser/;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 BEGIN {
   my $MyDebug = 0;
@@ -430,7 +430,7 @@ Hence this module.
 
 This module calls C<CGI::Carp qw/fatalsToBrowser/> and C<set_message()> function internally. If something dies or croaks, this confesses stack traces, included modules (optional), environmental variables (optional, too) in a more decent way.
 
-When you finish debugging, set debug option to false (via some environmental variable, for example). Then, more limited, less informative error screen appears when dies or croaks. If something goes wrong and your users might see the screen, they only know something has happened. They'll never know where your modules are and they'll never see the awkward 500 Internal Server Error -- hopefully.
+When you finish debugging, set debug option to false (via some environmental variable, for example). Then, more limited, less informative error screen appears with dies or croaks. If something goes wrong and your users might see the screen, they only know something has happened. They'll never know where your modules are and they'll never see the awkward 500 Internal Server Error -- hopefully.
 
 You can, and are suggested to, customize both debug and error screens, and some style settings, in harmony with your application.
 
@@ -577,21 +577,17 @@ The concept, debug screen template and style are based on several Japanese hacke
 
 =over 4
 
-=item tokuhirom at L<http://tokuhirom.dnsalias.org/~tokuhirom/tokulog/>
+=item tokuhirom (Tokuhiro Matsuno)
 
-L<Sledge::Plugin::DebugScreen|http://tokuhirom.dnsalias.org/~tokuhirom/tokulog/2181.html>
+for original Sledge::Plugin::DebugScreen (L<http://tokuhirom.dnsalias.org/~tokuhirom/tokulog/2181.html>, this site is gone now)
 
-=item nipotan at L<http://blog.livedoor.jp/nipotan/>
+=item nipotan (Koichi Taniguchi)
 
-L<patch|http://blog.livedoor.jp/nipotan/archives/50342811.html> and L<2nd patch|http://blog.livedoor.jp/nipotan/archives/50342898.html> for Sledge::Plugin::DebugScreen
+for patches for Sledge::Plugin::DebugScreen (L<http://blog.livedoor.jp/nipotan/archives/50342811.html> and L<http://blog.livedoor.jp/nipotan/archives/50342898.html>)
 
-=item nekokak at L<http://www.border.jp/nekokak/blog/>
+=item nekokak (Atsushi Kobayashi)
 
-L<CGI::Application::Plugin::DebugScreen|http://search.cpan.org/dist/CGI-Application-Plugin-DebugScreen/> articles
-L<1|http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre.html>,
-L<2|http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre_1.html>,
-L<3|http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre_2.html>,
-L<4|http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre_3.html>
+for L<CGI::Application::Plugin::DebugScreen> articles (L<http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre.html>, L<http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre_1.html>, L<http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre_2.html>, L<http://www.border.jp/nekokak/blog/archives/2005/12/cgiappdebugscre_3.html>, all gone now)
 
 =back
 
